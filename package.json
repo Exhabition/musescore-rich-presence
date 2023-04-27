@@ -6,7 +6,8 @@
     "version": "1.0.0",
     "scripts": {
         "start": "node .",
-        "autostart": "node src/service.js"
+        "autostart": "node src/service.js --install",
+        "autostart-disable": "node src/service.js --uninstall"
     },
     "dependencies": {
         "@arcsine/win-info": "^0.1.2",
