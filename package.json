@@ -1,14 +1,17 @@
 {
     "name": "musescore-rich-presence",
+    "main": "src/rpc.js",
     "author": "FireController#1847",
     "description": "Gives MuseScore Discord Rich Presence",
     "version": "1.0.0",
     "scripts": {
-        "start": "node ."
+        "start": "node .",
+        "autostart": "node src/service.js"
     },
     "dependencies": {
         "@arcsine/win-info": "^0.1.2",
         "discord-rpc": "^3.0.1",
-        "find-process": "^1.4.1"
+        "find-process": "^1.4.1",
+        "node-windows": "^1.0.0-beta.8"
     }
 }
