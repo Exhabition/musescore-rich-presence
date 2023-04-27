@@ -25,7 +25,7 @@ class MuseScoreClient {
 		this.discordClient.login({ clientId: "577645453429047314" });
 
 		this.states = [];
-		this.statesIndex = 0;
+		this.stateIndex = 0;
         this.noAppsRunningLogged = false;
 	}
 
@@ -43,14 +43,17 @@ class MuseScoreClient {
 				if (this.sheetInfo.scoreName != this.lastfile) {
 					this.start = new Date();
 					this.lastfile = this.sheetInfo.scoreName;
+                    this.states = [];
+                    this.stateIndex = 0;
 				}
 			} catch (error) {
-				logger.error("X Unable to read ScoreInfo.json! Is the file corrupt?");
+				logger.error(`X Unable to read ScoreInfo.json! Is the file corrupt? (${currDir})`);
 				logger.error(error);
 			}
 		} else {
 			logger.error(
-				"X Whoops! I wasn't able to find the ScoreInfo.json. Did you install the CurrentScoreInfo MuseScore plugin?"
+				`X Whoops! I wasn't able to find the ScoreInfo.json. Did you install the CurrentScoreInfo MuseScore plugin?
+                (${currDir})`
 			);
 		}
 	}
@@ -59,7 +62,7 @@ class MuseScoreClient {
 		if (!this.app || !this.window || !this.sheetInfo) {
 			await this.init();
 
-			if (!this.app || !this.window) {
+			if (!this.app) {
                 if (this.noAppsRunningLogged) return;
                 else {
                     this.noAppsRunningLogged = true;
@@ -71,7 +74,7 @@ class MuseScoreClient {
 
 		if (this.app) {
 			try {
-				this.window = await wi.getByPid(app.pid);
+				this.window = await wi.getByPid(this.app.pid);
 			} catch (error) {
 				logger.error(error);
 			}
@@ -104,26 +107,29 @@ class MuseScoreClient {
 			appName === "MuseScore3.exe" ? "MuseScore 3" : appName === "MuseScore4.exe" ? "MuseScore 4" : "MuseScore";
 
 		if (this.sheetInfo) {
-			if (this.sheetInfo.title) states.push(`Title: ${this.window.sheet.title}`);
-			if (this.sheetInfo.subtitle) states.push(`Subtitle: ${this.window.sheet.subtitle}`);
-			if (this.sheetInfo.composer) states.push(`Composer: ${this.window.sheet.composer}`);
-
-			states.push(`Contains ${this.sheetInfo.nmeasures} Measures`);
-			states.push(`Contains ${this.sheetInfo.npages} Pages`);
-			states.push(`Contains ${this.sheetInfo.ntracks} Tracks`);
-
-			this.stateindex++;
-			if (this.stateindex >= this.states.length) this.stateindex = 0;
+            const states = this.states;
+            if (states.length < 1) {
+                if (this.sheetInfo.title) states.push(`Title: ${this.sheetInfo.title}`);
+                if (this.sheetInfo.subtitle) states.push(`Subtitle: ${this.sheetInfo.subtitle}`);
+                if (this.sheetInfo.composer) states.push(`Composer: ${this.sheetInfo.composer}`);
+    
+                states.push(`Contains ${this.sheetInfo.nmeasures} Measures`);
+                states.push(`Contains ${this.sheetInfo.npages} Pages`);
+                states.push(`Contains ${this.sheetInfo.ntracks} Tracks`);
+            }
 
 			this.discordClient.setActivity({
 				details: `Editing ${this.sheetInfo.scoreName}`,
-				state: this.states[this.stateindex],
+				state: this.states[this.stateIndex],
 				startTimestamp: this.start,
 				largeImageKey: largeImageKey,
 				smallImageKey: smallImageKey,
 				largeImageText: appTitle,
 				smallImageText: `Contains ${this.sheetInfo.nmeasures} Measures`
 			});
+
+            this.stateIndex += 1;
+			if (this.stateIndex >= states.length) this.stateIndex = 0;
 		}
 	}
 }
