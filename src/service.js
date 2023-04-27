@@ -8,6 +8,7 @@ const service = new Service({
     name: "MuseScore | Discord Rich Presence",
     description: "Automatically starts the RPC script whenever the machine is booted up",
     script: absolutePath,
+    scriptOptions: "--is-service"
 });
 
 service.once("install", () => {
