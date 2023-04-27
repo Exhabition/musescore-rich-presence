@@ -3,6 +3,9 @@
     "author": "FireController#1847",
     "description": "Gives MuseScore Discord Rich Presence",
     "version": "1.0.0",
+    "scripts": {
+        "start": "node ."
+    },
     "dependencies": {
         "@arcsine/win-info": "^0.1.2",
         "discord-rpc": "^3.0.1",
